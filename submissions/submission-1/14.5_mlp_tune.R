@@ -42,6 +42,14 @@ grid_params <- extract_parameter_set_dials(mlp_spec) %>%
     penalty = penalty()
   )
 
+recipe_params <- extract_parameter_set_dials(recipe_mlp) %>% 
+  update(
+    num_comp = num_comp(c(2, 10))
+  )
+
+grid_params <- grid_params %>% 
+  bind_rows(recipe_params)
+
 mlp_grid <- grid_random(grid_params, size = 20)
 
 # tune/fit workflow/model ----
