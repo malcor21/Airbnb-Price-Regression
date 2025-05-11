@@ -56,7 +56,7 @@ lasso_params <- lasso_params %>%
 # define grid
 lasso_grid <- grid_random(
   lasso_params,
-  levels = 20
+  size = 20
 )
 
 # fit workflow/model ----
@@ -68,7 +68,7 @@ tic("s1_lasso") # start clock
 # tuning code in here
 tune_lasso <- lasso_wflow %>% 
   tune_grid(
-    resamples = class_folds,
+    resamples = reg_folds,
     grid = lasso_grid,
     control = control_grid(save_workflow = TRUE),
     metrics = metric_set(rmse, rsq, mae)
@@ -92,3 +92,6 @@ save(
   tictoc_lasso,
   file = here("submissions/submission-1/results/tune_lasso.rda")
 )
+
+# assuming that warning messages are a factor of the random grid's tuning (seem
+# to occur for high penalties). Not going to change anything for now
