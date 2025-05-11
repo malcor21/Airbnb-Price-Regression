@@ -30,7 +30,7 @@ bt_spec <-
     learn_rate = tune()
   ) %>%
   set_engine('xgboost') %>%
-  set_mode('reegression')
+  set_mode('regression')
 
 # define workflows ----
 bt_wflow <- 
