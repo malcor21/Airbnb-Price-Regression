@@ -30,7 +30,7 @@ important_vars_clean <- important_vars %>%
     # see which ones are numeric and which are factor
     # direct match is numeric otherwise factor
     # because factor vars were  renamed to factor_level
-    class = if_else(value %in% names(class_train),
+    class = if_else(value %in% names(reg_train),
                     "numeric", "factor"),
     # if it is a factor remove the "level"
     name = if_else(class == "factor",
@@ -43,14 +43,14 @@ important_vars_clean <- important_vars %>%
   pull(name)
 
 # variables to keep
-var_keep <- intersect(important_vars_clean, names(class_train))
+var_keep <- intersect(important_vars_clean, names(reg_train))
 
-class_train %>% 
+reg_train %>% 
   select(all_of(var_keep)) %>% 
   glimpse()
 
 # correlation?
-# vars_cor <- class_train %>% 
+# vars_cor <- reg_train %>% 
 #   select(all_of(var_keep)) %>% 
 #   select(where(is.numeric)) %>% 
 #   cor(use = "pairwise.complete.obs")
@@ -59,10 +59,10 @@ class_train %>%
 #   corrplot()
 
 # lasso recipe ----
-recipe_lasso <- recipe(host_is_superhost ~ ., data = class_train) %>% 
+recipe_lasso <- recipe(price_log10 ~ ., data = reg_train) %>% 
   update_role(id, new_role = "id") %>% 
   update_role(price, new_role = "price") %>% 
-  step_select(all_of(!!(var_keep)), host_is_superhost, skip = TRUE) %>% 
+  step_select(all_of(!!(var_keep)), price_log10, skip = TRUE) %>% 
   step_mutate(
     host_since = as.numeric(format(host_since, format = "%Y"))
   ) %>% 
@@ -81,10 +81,10 @@ recipe_lasso <- recipe(host_is_superhost ~ ., data = class_train) %>%
   step_pca(all_numeric_predictors(), num_comp = tune())
 
 # rf/bt recipe ----
-recipe_tree <- recipe(host_is_superhost ~ ., data = class_train) %>% 
+recipe_tree <- recipe(price_log10 ~ ., data = reg_train) %>% 
   update_role(id, new_role = "id") %>% 
   update_role(price, new_role = "price") %>% 
-  step_select(all_of(!!(var_keep)), host_is_superhost, skip = TRUE) %>%
+  step_select(all_of(!!(var_keep)), price_log10, skip = TRUE) %>%
   step_mutate(
     host_since = as.numeric(format(host_since, format = "%Y"))
   ) %>% 
@@ -105,10 +105,10 @@ recipe_tree <- recipe(host_is_superhost ~ ., data = class_train) %>%
 #   glimpse()
 
 # knn recipe ----
-recipe_knn <- recipe(host_is_superhost ~ ., data = class_train) %>% 
+recipe_knn <- recipe(price_log10 ~ ., data = reg_train) %>% 
   update_role(id, new_role = "id") %>% 
   update_role(price, new_role = "price") %>% 
-  step_select(all_of(!!(var_keep)), host_is_superhost, skip = TRUE) %>% 
+  step_select(all_of(!!(var_keep)), price_log10, skip = TRUE) %>% 
   step_mutate(
     host_since = as.numeric(format(host_since, format = "%Y"))
   ) %>% 
@@ -124,11 +124,11 @@ recipe_knn <- recipe(host_is_superhost ~ ., data = class_train) %>%
   step_nzv(all_predictors()) %>% 
   step_normalize(all_predictors())
 
-# svm poly/rbf ----
-recipe_svm <- recipe(host_is_superhost ~ ., data = class_train) %>% 
+# mlp ----
+recipe_mlp <- recipe(price_log10 ~ ., data = reg_train) %>% 
   update_role(id, new_role = "id") %>% 
   update_role(price, new_role = "price") %>% 
-  step_select(all_of(!!(var_keep)), host_is_superhost, skip = TRUE) %>% 
+  step_select(all_of(!!(var_keep)), price_log10, skip = TRUE) %>% 
   step_mutate(
     host_since = as.numeric(format(host_since, format = "%Y"))
   ) %>% 
@@ -150,4 +150,4 @@ recipe_svm <- recipe(host_is_superhost ~ ., data = class_train) %>%
 save(recipe_lasso, file = here("submissions/submission-1/recipes/recipe_lasso.rda"))
 save(recipe_tree, file = here("submissions/submission-1/recipes/recipe_tree.rda"))
 save(recipe_knn, file = here("submissions/submission-1/recipes/recipe_knn.rda"))
-save(recipe_svm, file = here("submissions/submission-1/recipes/recipe_svm.rda"))
+save(recipe_mlp, file = here("submissions/submission-1/recipes/recipe_mlp.rda"))
