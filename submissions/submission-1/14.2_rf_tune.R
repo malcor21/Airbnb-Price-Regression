@@ -49,7 +49,7 @@ rf_params <- extract_parameter_set_dials(rf_spec) %>%
 # define grid
 rf_grid <- grid_random(
   rf_params,
-  levels = 20
+  size = 20
 )
 
 # fit workflow/model ----
