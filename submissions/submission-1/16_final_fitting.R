@@ -53,7 +53,10 @@ bt1_096_predict <- predict(bt1_096_fit, new_data = reg_test)
 bt1_096_predict <- bt1_096_predict %>% 
   bind_cols(reg_test) %>% 
   select(id, .pred) %>% 
-  rename(predicted = .pred)
+  rename(predicted = .pred) %>% 
+  mutate(
+    predicted = round(10^predicted, digits = 0)
+  )
 
 # saving predict object
 write_csv(bt1_096_predict, file = here("submissions/submission-1/pred/bt1_096_predict.csv"))
@@ -81,7 +84,10 @@ bt2_176_predict <- predict(bt2_176_fit, new_data = reg_test)
 bt2_176_predict <- bt2_176_predict %>% 
   bind_cols(reg_test) %>% 
   select(id, .pred) %>% 
-  rename(predicted = .pred)
+  rename(predicted = .pred) %>% 
+  mutate(
+    predicted = round(10^predicted, digits = 0)
+  )
 
 # saving predict object
 write_csv(bt2_176_predict, file = here("submissions/submission-1/pred/bt2_176_predict.csv"))
@@ -109,7 +115,10 @@ rf1_11_predict <- predict(rf1_11_fit, new_data = reg_test)
 rf1_11_predict <- rf1_11_predict %>% 
   bind_cols(reg_test) %>% 
   select(id, .pred) %>% 
-  rename(predicted = .pred)
+  rename(predicted = .pred) %>% 
+  mutate(
+    predicted = round(10^predicted, digits = 0)
+  )
 
 # saving predict object
 write_csv(rf1_11_predict, file = here("submissions/submission-1/pred/rf1_11_predict.csv"))
@@ -137,7 +146,10 @@ knn1_6_predict <- predict(knn1_6_fit, new_data = reg_test)
 knn1_6_predict <- knn1_6_predict %>% 
   bind_cols(reg_test) %>% 
   select(id, .pred) %>% 
-  rename(predicted = .pred)
+  rename(predicted = .pred) %>% 
+  mutate(
+    predicted = round(10^predicted, digits = 0)
+  )
 
 # saving predict object
 write_csv(knn1_6_predict, file = here("submissions/submission-1/pred/knn1_6_predict.csv"))
