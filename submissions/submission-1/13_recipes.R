@@ -13,6 +13,10 @@ tidymodels_prefer()
 # load data
 load(here("data/reg_train.rda"))
 
+
+reg_train %>% 
+  glimpse()
+
 # load rf variable selection
 load(here("submissions/submission-1/results/var_select_fit_rf.rda"))
 

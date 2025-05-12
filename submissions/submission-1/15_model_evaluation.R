@@ -33,7 +33,7 @@ tune_results %>%
   collect_metrics() %>%
   filter(.metric == "mae") %>%
   arrange(desc(mean)) %>%
-  select(-c(preproc, .metric, .estimator, n)) %>% 
+  select(-c(preproc, .estimator, n)) %>% 
   view()
 
 tune_results %>% 
