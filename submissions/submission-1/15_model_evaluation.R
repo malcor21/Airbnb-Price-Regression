@@ -39,51 +39,40 @@ tune_results %>%
 tune_results %>% 
   autoplot(metric = "mae")
 
-# results table - useful for memo
+# bt analysis ----
+tune_bt %>% 
+  autoplot(metric = "mae")
+# top end of trees consistently performs best - expand range past 1k
+# small learn rate is best by far - explore below
+# mtry and min_n don't seem to effect performance at all. 
+# Maybe a small mtry is best, but not a huge effect
 
-# times <- bind_rows(
-#   tictoc_svm_poly_rec1,
-#   tictoc_svm_poly_rec2,
-#   tictoc_svm_rbf_rec1,
-#   tictoc_svm_rbf_rec2
-# ) %>% 
-#   select(
-#     model, runtime
-#   ) %>% 
-#   mutate(
-#     recipe = str_remove(model, "^[^_]*_")
-#   ) %>% 
-#   mutate(
-#     model = str_remove(model, "_[^_]*$")
-#   )
-# 
-# svm_table <- svm_results %>% 
-#   collect_metrics() %>% 
-#   filter(.metric == "rmse") %>% 
-#   slice_min(mean, by = wflow_id) %>% 
-#   arrange(mean) %>% 
-#   select(-c(.config, preproc, .metric, .estimator, n)) %>% 
-#   rename(recipe = wflow_id) %>% 
-#   left_join(times, by = c("model", "recipe")) %>% 
-#   mutate(
-#     recipe = str_remove(recipe, "^[^_]*_"),
-#     std_err = signif(std_err, digits = 3)
-#   ) %>% 
-#   mutate(
-#     recipe = if_else(
-#       recipe == "rec2",
-#       "Random forest",
-#       "Lasso"
-#     )
-#   ) %>% 
-#   relocate(model, recipe, mean, std_err, runtime) %>% 
-#   rename(
-#     Model = model,
-#     Recipe = recipe,
-#     `Best RMSE` = mean,
-#     Std_err = std_err,
-#     Runtime = runtime
-#   )
-# 
-# # saving out results table
-# save(svm_table, file = here("results/svm_table.rda"))
+tune_bt %>% 
+  collect_metrics %>% 
+  filter(.metric == "mae") %>% 
+  view()
+
+# rf analysis ----
+tune_rf %>% 
+  autoplot(metric = "mae")
+# high mtry is best - explore above 25
+# low min_n is best: narrow around 2
+
+# knn analysis ----
+tune_knn %>% 
+  autoplot(metric = "mae")
+# test greater # neighbors - explore above 10
+
+# mlp analysis ----
+mlp_tune %>% 
+  autoplot(metric = "mae")
+# Greater # components better - test above 10
+# greater # hidden units better - test above 10
+# smaller amount ouf regularization better - test below -10
+
+# lasso analysis ----
+tune_lasso %>% 
+  autoplot(metric = "mae")
+# low amount of regularization is best - test below -7.5
+# not sure on num components, but maybe try above 8
+# lasso penalty proportion doesn't seem to do much
