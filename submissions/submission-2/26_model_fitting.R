@@ -19,7 +19,11 @@ load(here("data/reg_test_v2.rda"))
 load(here("submissions/submission-2/results/tune_bt.rda"))
 
 # setting seed
-set.seed(676)
+set.seed(4545)
+
+# adding price column
+reg_test_v2 <- reg_test_v2 %>% 
+  mutate(price = NA)
 
 # bt1: 25 ----
 
