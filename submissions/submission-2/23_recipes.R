@@ -15,7 +15,7 @@ load(here("data/reg_train_v2.rda"))
 # trees recipe ----
 recipe_tree <- recipe(price_log10 ~ ., data = reg_train_v2) %>% 
   update_role(id, new_role = "id") %>%
-  update_role(price, new_role = "price_og") %>% 
+  step_rm(price) %>% 
   step_rm(
     description, host_location, host_about, host_neighbourhood, host_listings_count,
     neighbourhood_cleansed, amenities, has_availability, bathrooms_text,
@@ -39,7 +39,7 @@ recipe_tree %>%
 # linear recipe ----
 recipe_linear <- recipe(price_log10 ~ ., data = reg_train_v2) %>% 
   update_role(id, new_role = "id") %>% 
-  update_role(price, new_role = "price_og") %>% 
+  step_rm(price) %>% 
   step_rm(
     description, host_location, host_about, host_neighbourhood, host_listings_count,
     neighbourhood_cleansed, amenities, has_availability, bathrooms_text,
@@ -60,7 +60,7 @@ recipe_linear <- recipe(price_log10 ~ ., data = reg_train_v2) %>%
 # knn recipe ----
 recipe_knn <- recipe(price_log10 ~ ., data = reg_train_v2) %>% 
   update_role(id, new_role = "id") %>% 
-  update_role(price, new_role = "price_og") %>% 
+  step_rm(price) %>%  
   step_rm(
     description, host_location, host_about, host_neighbourhood, host_listings_count,
     neighbourhood_cleansed, amenities, has_availability, bathrooms_text,
@@ -80,7 +80,7 @@ recipe_knn <- recipe(price_log10 ~ ., data = reg_train_v2) %>%
 # mlp recipe ----
 recipe_mlp <- recipe(price_log10 ~ ., data = reg_train_v2) %>% 
   update_role(id, new_role = "id") %>% 
-  update_role(price, new_role = "price_og") %>% 
+  step_rm(price) %>% 
   step_rm(
     description, host_location, host_about, host_neighbourhood, host_listings_count,
     neighbourhood_cleansed, amenities, has_availability, bathrooms_text,
