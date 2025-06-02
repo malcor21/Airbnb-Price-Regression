@@ -8,6 +8,7 @@ library(here)
 library(future)
 library(tictoc)
 library(bonsai)
+library(stacks)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -21,6 +22,9 @@ load(here("submissions/submission-2/recipes/recipe_tree.rda"))
 # parallel processing ----
 num_cores <- parallel::detectCores(logical= TRUE)
 plan(multisession, workers = num_cores - 2)
+
+# set seed
+set.seed(44)
 
 # model specification ----
 bt_spec <-
@@ -64,7 +68,7 @@ bt_grid <- grid_space_filling(
 
 # start timer
 tic.clearlog() # clear log
-tic("s2_bt_lassovars") # start clock
+tic("s2_bt") # start clock
 
 # tuning code in here
 tune_bt_lassovars <- bt_wflow %>% 

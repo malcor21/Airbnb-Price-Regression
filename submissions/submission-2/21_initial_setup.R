@@ -12,6 +12,8 @@ tidymodels_prefer()
 # load data
 load(here("data/reg_train_v2.rda"))
 
+reg_train_v2 %>% glimpse()
+
 # set seed
 set.seed(2828282)
 
