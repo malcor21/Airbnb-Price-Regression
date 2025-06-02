@@ -25,7 +25,7 @@ tune_bt_lassovars %>%
 # mtry: not super clear. Try a little larger (2, 30)
 # trees: seem to decrease. Go out further (1200, 2400)
 # learn_rate: try smaller (-4, -0.5)
-# min_n: smaller seems best. (2, 30)
+# min_n: smaller seems best. (2, 20)
 # loss_reduction: smaller is definitely best - try below -10 (-15, -3)
 # tree_depth: maybe increasing is best? try (4, 20)
 
