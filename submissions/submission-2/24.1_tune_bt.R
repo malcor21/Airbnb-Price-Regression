@@ -50,10 +50,10 @@ bt_wflow <-
 # setting parameter values
 bt_params <- extract_parameter_set_dials(bt_spec) %>% 
   update(
-    mtry = mtry(c(2, 40)), 
+    mtry = mtry(c(2, 20)), 
     min_n = min_n(),
     trees = trees(c(750, 2000)),
-    learn_rate = learn_rate(c(-7, -2)),
+    learn_rate = learn_rate(c(-2, -0.1)),
     loss_reduction = loss_reduction(),
     tree_depth = tree_depth()
   )
@@ -71,11 +71,12 @@ tic.clearlog() # clear log
 tic("s2_bt") # start clock
 
 # tuning code in here
-tune_bt_lassovars <- bt_wflow %>% 
+tune_bt_lassovars <- bt_wflow %>%  # name was a mistake, will fix next time
   tune_grid(
     resamples = reg_folds,
     grid = bt_grid,
-    control = control_grid(save_workflow = TRUE)
+    control = control_grid(save_workflow = TRUE),
+    metrics = metric_set(rmse, rsq, mae)
   )
 
 toc(log = TRUE) # stop clock

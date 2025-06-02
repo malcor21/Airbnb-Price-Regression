@@ -43,7 +43,7 @@ tune_results %>%
 tune_bt %>% 
   autoplot(metric = "mae")
 # top end of trees consistently performs best - expand range past 1k
-# small learn rate is best by far - explore below
+# large learn rate is best by far - explore above
 # mtry and min_n don't seem to effect performance at all. 
 # Maybe a small mtry is best, but not a huge effect
 
@@ -55,8 +55,8 @@ tune_bt %>%
 # rf analysis ----
 tune_rf %>% 
   autoplot(metric = "mae")
-# high mtry is best - explore above 25
-# low min_n is best: narrow around 2
+# middle mtry is best - explore 10-30
+# low min_n is best: 2-10
 
 # knn analysis ----
 tune_knn %>% 
@@ -66,13 +66,13 @@ tune_knn %>%
 # mlp analysis ----
 mlp_tune %>% 
   autoplot(metric = "mae")
-# Greater # components better - test above 10
-# greater # hidden units better - test above 10
-# smaller amount ouf regularization better - test below -10
+# Greater # components better - test 8-16
+# greater # hidden units better - test 7.5 - 15
+# smaller amount ouf regularization better - -20 to -7.5
 
 # lasso analysis ----
 tune_lasso %>% 
   autoplot(metric = "mae")
-# low amount of regularization is best - test below -7.5
-# not sure on num components, but maybe try above 8
+# low amount of regularization is best - -15, -5
+# not sure on num components, but maybe try above 4 - 12
 # lasso penalty proportion doesn't seem to do much
