@@ -73,7 +73,7 @@ tic("s2_bt") # start clock
 # tuning code in here
 tune_bt_lassovars <- bt_wflow %>% 
   tune_grid(
-    resamples = class_folds,
+    resamples = reg_folds,
     grid = bt_grid,
     control = control_grid(save_workflow = TRUE)
   )
