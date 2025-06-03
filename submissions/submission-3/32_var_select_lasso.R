@@ -101,4 +101,4 @@ var_select_fit_lasso <- fit(optimal_wflow, reg_train_v3)
 var_select_fit_lasso %>% tidy() %>% view()
 
 # write out variable selection results ----
-save(var_select_fit_lasso, file = here("submissions/submission-2/results/var_select_fit_lasso.rda"))
+save(var_select_fit_lasso, file = here("submissions/submission-3/results/var_select_fit_lasso.rda"))
