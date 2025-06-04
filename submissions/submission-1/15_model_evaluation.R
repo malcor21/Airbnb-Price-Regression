@@ -36,8 +36,15 @@ tune_results %>%
   select(-c(preproc, .estimator, n)) %>% 
   view()
 
-tune_results %>% 
-  autoplot(metric = "mae")
+s1_autoplot <- tune_results %>% 
+  autoplot(metric = "mae") +
+  guides(shape = "none") +
+  labs(
+    color = "Model", 
+    title = "Submission Set 1 Models, Ranked"
+  )
+
+ggsave(s1_autoplot, file = here("figures/s1_autoplot.jpg"))
 
 # bt analysis ----
 tune_bt %>% 

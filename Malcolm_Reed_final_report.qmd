@@ -1,0 +1,227 @@
+---
+title: "Final Report: Regression Problem"
+subtitle: |
+  | Regression Problem 
+  | Data Science 3 with R (STAT 301-3)
+author: "Reed Malcolm"
+pagetitle: "Regression Probelm Reed Malcolm"
+date: today
+format:
+  html:
+    
+    toc: true
+    embed-resources: true
+execute:
+  warning: false
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: load-data-and-packages
+#| echo: false
+
+# loading packages
+library(tidyverse)
+library(here)
+
+# loading objects
+
+```
+
+
+::: {.callout-tip icon="false"}
+## Github Repo Link
+
+[Reed's Regression Problem GitHub
+Repo](https://github.com/stat301-3-2025-spring/reg-pred-prob-malcor21.git)
+:::
+
+## Introduction
+
+Price prediction using machine learning has become increasingly prominent in the rental 
+space due to the prevalence of rate-recommendation platforms like RealPage.[^1] 
+Machine learning is particularly amenable to rental properties on the basis of 
+their wealth of physical and administrative qualities to guide prediction. A 
+timeshare service like Airbnb could utilize such methods, for example, to advise 
+hosts’ pricing decisions based on listing characteristics. 
+
+This regression exercise seeks to construct exactly that type of model, using machine learning workflows to predict Airbnb rental prices based on physical and demographic qualities. As part of a coursewide data science competition, this prediction problem adheres to the model building and submission guidelines listed on the corresponding Kaggle page. Airbnb listing data for the exercise was also provided on Kaggle.[^2] 
+
+The Airbnb regression prediction problem seeks to forecast price using machine 
+learning workflows from the Stat 301 course sequence. This repository is structured
+by workflow, with each pipeline constituting a wave of model submissions to the Kaggle
+competition. Workflows consist of all predictive modeling steps save for data cleaning---variable
+selection, preprocessing, model fitting and tuning, evaluation, and final fitting.
+A variety of model types were employed including generalized linear, random
+forest, boosted trees, k-nearest neighbors, and neural network workflows. Submission
+pipelines were constructed until the A grade threshold, a mean absolute error (MAE) of
+97 or less, was achieved by a generated model. This report examines two models
+from the project: a boosted trees workflow that exceeded the A threshold, and a random
+forest model to discuss robustness.
+
+[^1]: Vegari, A. and Anderson, C (2025), [RealPage Opens New Front in Algorithmic Pricing Challenges with Suit Challenging Berkeley Ordinance](https://www.pbwt.com/antitrust-update-blog/realpage-opens-new-front-in-algorithmic-pricing-challenges-with-suit-challenging-berkeley-ordinance)
+
+[^2]: Arend Kuyper (2025), [Regression (Spring 2025): Airbnb prices](https://www.kaggle.com/competitions/regression-spring-2025-airbnb-prices/overview)
+
+
+## Selected Model 1
+
+The first selected model was `rf1_11_predict.csv`, the strongest random forest model generated
+during the first submission wave.
+
+![Submission Set 1 Models, Ranked](figures/s1_autoplot.jpg){#fig-s1-autoplot}
+
+The first submission set took a broad approach to predicting price. After implementing
+the basic data cleaning steps for information extraction discussed in class---capturing 
+common amenities, bathrooms per listing, etc.---I utilized a kitchen-sink philosophy
+for tuning and preprocessing. Variable selection was conducted using a minimal-processing
+random forest model, retrieving an arbitrary 23 predictors for use in prediction.
+Preprocessing objects were generated for the five model types mentioned above utilizing only
+the required steps, and parameter values largely applied default ranges when tuning.
+The best 
+
+
+submitted best performing of each type to evaluate on public leaderboard - largely
+same trend
+
+s1 results
+
+s1:
+. b1 best, rf slightly behind
+. best non BT
+
+
+while i mainly pursued BT, RF performed respectably on first iteration
+Somewhat arbitrary, since only BT really pursued
+But BT has overturning issues (learn rate and loos reduction)
+RF Might overfit since it’s trees, but probably less so
+Would be interested to see performance on private leaderboard, although it’s prbo still worse given lack of preprocessing and tuning
+
+
+
+
+
+
+
+s2:
+. var select bad from class
+
+
+
+
+
+The second selected model, `bt1_07_all_predict.csv`, crossed the A grade threshold
+with a MAE of 96.7 on the public leaderboard. It was the best-performing boosted
+trees workflow from the third submission wave.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+That second submission wave was informed by lessons from the first. The first submission wave utilized a kitchen-sink approach to preprocessing and tuning. Data cleaning included number parsing and predictor factorization as well as value extraction from the bathrooms and amenities variables. Variable selection was informed by a basic random forest model, and I largely conducted preprocessing with only the necessary steps to run each model type. The first submission pipeline produced serviceable random forest and boosted trees models; see @fig-s1-autoplot for 
+a plot of all tested models during the first submission set. However, I felt that the haphazard variable selection, preprocessing, and tuning steps could be improved to enhance predictive power. Specifically, I sought to use a less arbitrary selection method, extract more features from the original dataset, and narrow tuning ranges.
+
+![Submission Set Boosted Trees Tuning](figures/s1_bt_autoplot.jpg){#fig-s1-bt-autoplot}
+
+The second submission wave fitted boosted trees, random forest, k-nearest neighbors, and neural network models, though I paid particular attention to the former two on account of their strong previous performance. As mentioned above, I used the second submission to fine-tune my overall machine learning pipeline. For additional preprocessing, I extracted year values from date predictors, changed review scores variables into binaries of high and low ratings, and pulled key terms from the listing description. In addition to the random forest-based variable selection, I added a parallel lasso pipeline for a tuned comparison. Hyperparameter ranges for each model were narrowed according to tuning results from the previous wave, which are shown in the above @fig-s1-bt-autoplot. Finally, in line with our discussions in class, I adopted the `lightgbm` package engine for the boosted trees workflow. 
+
+```{r}
+#| label: tbl-s2-metrics
+#| tbl-cap: "Selected Model 1 Performance"
+#| echo: false
+#| eval: false
+
+metrics_s2_bt1_07_lassovars %>% 
+  knitr::kable(digits = 3)
+```
+
+
+The changes implemented for the second submission wave improved predictive performance overall. After resolving an issue with submission formatting, a boosted trees model using lasso-selected variables emerged as the optimal model. 
+As indicated in @tbl-s2-metrics, the `bt1_07_lassovars_predict_prob.csv` model
+produced an overall accuracy of 0.92 and a ROC AUC of 0.974. The latter metric, the 
+more useful evaluation tool, was particularly reassuring, indicating that the
+boosted trees model was able to identify a very high proportion of Airbnb superhosts
+without inflating the false positive rate.
+
+While not my highest-performing model of the entire exercise, the second submission’s boosted trees model presents a basic but effective framework, avoiding potential overfitting in the later models. I therefore believe that this model could prove as or more powerful for the private leaderboard testing set as the model discussed next. Nevertheless, because the second submission’s optimal model utilizes a boosted trees workflow with a high learn rate, I would expect overfitting to remain an issue for generalizability. 
+
+## Selected Model 2
+
+The second submission I have selected is `bt1_45_lassovars_predict_prob.csv`, the optimal boosted trees model generated during the fifth submission wave. 
+
+```{r}
+#| label: tbl-s3-s4
+#| echo: false
+#| tbl-cap: "Submission 3 and 4 Optimal Model Results"
+#| eval: false
+
+tribble(
+  ~Submission, ~Optimal_Model_Type, ~Optimal_Model_Name, ~Training_ROC_AUC, ~Testing_ROC_AUC,
+  3, "Boosted trees", "bt1_23_lassovars_predict_prob.csv", 0.973, 0.972,
+  4, "Boosted trees", "bt1_23_lassovars_predict_prob.csv", 0.973, 0.972
+) %>% 
+  knitr::kable()
+```
+
+During the third and fourth submission pipelines, I sought to improve predictive power using preprocessing and tuning levers. For the third submission, I added predictors for more potentially useful amenities, generated count variables for amenities and host verifications, and created a foreign ownership indicator. For the fourth I tried removing all amenity indicators based on discussion from class. In both cases, neither of these preprocessing strategies seemed to improve performance, with the optimal boosted trees models from the third and fourth submissions falling behind the second in terms of ROC AUC.
+
+![Submission 4 boosted trees tuning](figures/s4_bt_autoplot.jpg){#fig-s4-autoplot}
+
+However, I did still gather relevant tuning information from the two pipelines. During the third submission wave, I began tuning two additional hyperparameters within the `lightgbm` specification framework: tree depth, which determines the model’s level of fitting to the training data, and the minimum loss reduction. Tuning these additional parameters should have strictly improved model performance regardless of overall weaker predictions, so I carried the practice over to my fifth submission pipeline. The above @fig-s4-autoplot shows the 
+tuning results that I applied to the fifth submission's successful boosted trees workflow.
+
+The fifth submission wave returned to the variable selection and preprocessing methods from the second, which had performed best on the public leaderboard, but narrowed tuning according to the previous two instances. My second selected model, a `lightgbm` boosted trees model with lasso-selected variables, returned ROC AUC values of 0.9746 during internal model evaluation and 0.9752 on the public Kaggle leaderboard, setting a new record and breaking the 97.5 threshold.
+
+## Conclusion
+
+Given our past course projects and class discussions, it was not surprising that the boosted trees workflow produced the best-performing models on the public Kaggle leaderboard. Along the way, enhanced cleaning and preprocessing to extract information from the dataset as well as bespoke hyperparameter tuning were key to increasing predictive power. The second submission model made full use of those levers; the first selected model, taken from the second submission pipeline, represented a less fitted but still strong alternative.
+
+```{r}
+#| label: tbl-ranges
+#| tbl-cap: "Bespoke tuning might have caused overfitting among the optimal boosted trees models"
+#| echo: FALSE
+
+tribble(
+  ~Hyperparameter, ~Default_Range, ~Optimal_Public_Value,
+  "learn_rate", "[-10, -1]", "-1.143",
+  "tree_depth", "[1, 15]", "19"
+) %>% 
+  knitr::kable()
+```
+
+
+It is nevertheless likely that both of the selected models were overfitted to the public leaderboard’s testing set. As we have discussed, the boosted trees workflow might be generally less robust to foreign data than its peers due to its learning nature. Further, the selected models demonstrated substantially higher learn rates and tree depth values than the `tidymodels` package defaults, suggesting possible overfitting to our data sample. 
+As shown in @tbl-ranges, the learn rate and tree depth parameters---which drive
+boosted trees model learning---used values in Selected Model 2 that were either near or above
+the `tidymodels` default range maxima. This suggests that some of Selected Model 2's
+gains could have reflected overtuning and would not necessarily be generalizable
+to new data.
+
+Future classification exercises might therefore seek to improve robustness by way of ensemble modeling. Though not a necessary step to reach the public leaderboard benchmark, ensemble modeling of a powerful boosted trees workflow alongside other models, 
+such as support vector machines and neural networks, would have likely produced a model with greater
+external validity to the private leaderboard and future Airbnb datasets.
+
+## AI statement
+
+Generative AI resources (Chat GPT-4o and perplexity.ai) to generate helper code 
+during the project’s data cleaning process. Specifically, I used Generative AI to produce
+complex regular expressions and generate functions for cleaning amenities data. 
