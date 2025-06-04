@@ -19,7 +19,24 @@ for (path in paths){
   load(path)
 }
 
-# bt analysis ----
+tune_results <-
+  as_workflow_set(
+    all = tune_bt_lassovars,
+    lassovars = tune_bt_lassovars_true
+  )
+
+tune_results %>% 
+  collect_metrics() %>%
+  filter(.metric == "mae") %>%
+  arrange(desc(mean)) %>%
+  select(-c(preproc, .estimator, n)) %>% 
+  view()
+
+tune_results %>% 
+  autoplot(metric = "mae") +
+  aes(color = wflow_id)
+
+# bt all analysis ----
 tune_bt_lassovars %>% 
   autoplot(metric = "mae")
 # mtry: not super clear. Try a little larger (2, 30)
@@ -30,4 +47,11 @@ tune_bt_lassovars %>%
 # tree_depth: maybe increasing is best? try (4, 20)
 
 tune_bt_lassovars %>% 
+  select_best(metric = "mae")
+
+# bt lassovars analysis ----
+tune_bt_lassovars_true %>% 
+  autoplot(metric = "mae")
+
+tune_bt_lassovars_true %>% 
   select_best(metric = "mae")
