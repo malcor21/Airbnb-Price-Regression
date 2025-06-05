@@ -125,71 +125,58 @@ The second selected model, `bt1_07_all_predict.csv`, crossed the A grade thresho
 with a MAE of 96.7 on the public leaderboard. It was the best-performing boosted
 trees workflow from the third submission wave.
 
+In line with the results of the first pass, the second submission wave focused on 
+fine-tuning the boosted trees workflow. The second submission abandoned the variable
+selection step (as per our discussions in class), increased the number of included
+amenity indicators, and added predictors extracting further text information. 
+I also transitioned to using the `lightgbm` engine for boosted trees tuning and 
+allowed for variation in the workflow's tree depth and minimum loss reduction. Overall,
+the second submission's optimal boosted trees model demonstrated a modest improvement to
+an MAE of 99.18 on the public Kaggle leaderboard.
 
-s2:
-. var select bad from class
-. a little preprocessing
-. lots of tuning (increased trees, learn rate, light gbm)
+![Submission Set 2 Boosted Trees Tuning](figures/s2_bt_autoplot.jpg){#fig-s2-bt-autoplot}
 
-s3: same but with further tuning of tree_depth, trees, and loss_reduction
-
-
-
-
-
-
-
-```{r}
-#| label: tbl-s3-s4
-#| echo: false
-#| tbl-cap: "Submission 3 and 4 Optimal Model Results"
-#| eval: false
-
-tribble(
-  ~Submission, ~Optimal_Model_Type, ~Optimal_Model_Name, ~Training_ROC_AUC, ~Testing_ROC_AUC,
-  3, "Boosted trees", "bt1_23_lassovars_predict_prob.csv", 0.973, 0.972,
-  4, "Boosted trees", "bt1_23_lassovars_predict_prob.csv", 0.973, 0.972
-) %>% 
-  knitr::kable()
-```
-
-During the third and fourth submission pipelines, I sought to improve predictive power using preprocessing and tuning levers. For the third submission, I added predictors for more potentially useful amenities, generated count variables for amenities and host verifications, and created a foreign ownership indicator. For the fourth I tried removing all amenity indicators based on discussion from class. In both cases, neither of these preprocessing strategies seemed to improve performance, with the optimal boosted trees models from the third and fourth submissions falling behind the second in terms of ROC AUC.
-
-![Submission 4 boosted trees tuning](figures/s4_bt_autoplot.jpg){#fig-s4-autoplot}
-
-However, I did still gather relevant tuning information from the two pipelines. During the third submission wave, I began tuning two additional hyperparameters within the `lightgbm` specification framework: tree depth, which determines the model’s level of fitting to the training data, and the minimum loss reduction. Tuning these additional parameters should have strictly improved model performance regardless of overall weaker predictions, so I carried the practice over to my fifth submission pipeline. The above @fig-s4-autoplot shows the 
-tuning results that I applied to the fifth submission's successful boosted trees workflow.
-
-The fifth submission wave returned to the variable selection and preprocessing methods from the second, which had performed best on the public leaderboard, but narrowed tuning according to the previous two instances. My second selected model, a `lightgbm` boosted trees model with lasso-selected variables, returned ROC AUC values of 0.9746 during internal model evaluation and 0.9752 on the public Kaggle leaderboard, setting a new record and breaking the 97.5 threshold.
+The third submission set built upon the previous wave with some minor tweaks. I added
+a few metavariables during preprocessing, such as foreign host ownership and a count
+of amenities. A lasso variable selection was also implemented, although it produced
+relatively less powerful models than the no-selection path. Most impactfully, I 
+narrowed the boosted trees workflow's hyperparameter tuning ranges based on
+the second submission wave results, shown above in @fig-s2-bt-autoplot. For the third
+wave I increased the number of trees to between 1200 and 2800 and reduced the tree
+depth and minimum loss reduction values. These changes produced `bt1_07_all_predict.csv`,
+which used a no-variable selection recipe to exceed the public Kaggle leaderboard's 
+A threshold; no further modeling was attempted. Still, overfitting remains a 
+concern as with any boosted trees workflow, and simply increasing the number of trees
+to improve predictive power does not seem like the most computationally efficient
+practice.
 
 ## Conclusion
 
-Given our past course projects and class discussions, it was not surprising that the boosted trees workflow produced the best-performing models on the public Kaggle leaderboard. Along the way, enhanced cleaning and preprocessing to extract information from the dataset as well as bespoke hyperparameter tuning were key to increasing predictive power. The second submission model made full use of those levers; the first selected model, taken from the second submission pipeline, represented a less fitted but still strong alternative.
+After our class discussions as well as evaluating the classification problem results,
+I anticipated a boosted trees workflow to perform best on this regression exercise. 
+My expectation seemed to hold, with only light preprocessing and hyperparameter
+tuning (as well as fewer submission pipelines as compared to the classification problem)
+being required to achieve the A threshold using a `lightgbm` boosted trees model. 
+Overall, boosted trees proved a powerful ML pathway for predicting listing price,
+even if the A threshold was a rather large mean average error of $97.
 
-```{r}
-#| label: tbl-ranges
-#| tbl-cap: "Bespoke tuning might have caused overfitting among the optimal boosted trees models"
-#| echo: FALSE
+As we have mentioned during past projects, the second selected model is likely overfit
+to the public leaderboard data---due to both its gains being tuning-dependent and the
+general nature of boosted trees modeling. It is also worrying that simply increasing
+the number of trees seemed to drive increases predictive power: a useful machine learnig
+workflow should be not just accurate but also efficient, even if reducing computation
+time was not a focus of this exercise. 
 
-tribble(
-  ~Hyperparameter, ~Default_Range, ~Optimal_Public_Value,
-  "learn_rate", "[-10, -1]", "-1.143",
-  "tree_depth", "[1, 15]", "19"
-) %>% 
-  knitr::kable()
-```
-
-
-It is nevertheless likely that both of the selected models were overfitted to the public leaderboard’s testing set. As we have discussed, the boosted trees workflow might be generally less robust to foreign data than its peers due to its learning nature. Further, the selected models demonstrated substantially higher learn rates and tree depth values than the `tidymodels` package defaults, suggesting possible overfitting to our data sample. 
-As shown in @tbl-ranges, the learn rate and tree depth parameters---which drive
-boosted trees model learning---used values in Selected Model 2 that were either near or above
-the `tidymodels` default range maxima. This suggests that some of Selected Model 2's
-gains could have reflected overtuning and would not necessarily be generalizable
-to new data.
-
-Future classification exercises might therefore seek to improve robustness by way of ensemble modeling. Though not a necessary step to reach the public leaderboard benchmark, ensemble modeling of a powerful boosted trees workflow alongside other models, 
-such as support vector machines and neural networks, would have likely produced a model with greater
-external validity to the private leaderboard and future Airbnb datasets.
+I chose a random forest model generated with default
+tuning range, `rf1_11_predict.csv`, as my second selected model to acknowledge the 
+issue of boosted trees overfitting. As a tree-based workflow, the random forest model
+might still suffer from overfitting. However, none of the other tested workflows---a generalized
+linear model, k-nearest neighbors, a multilayer neural network---demonstrated a comparable
+performance from the outset. Constructing an ensemble model could therefore be an attractive
+future direction, combining a broad tree-based instance with the other workflows for
+a more generalizable tool. In future price prediction problems, I would be interested in
+dedicating more attention to tuning and incorporating non-tree workflows for a more
+holistic approach.
 
 ## AI statement
 
