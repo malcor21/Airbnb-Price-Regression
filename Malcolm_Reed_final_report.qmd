@@ -83,90 +83,61 @@ for tuning and preprocessing. Variable selection was conducted using a minimal-p
 random forest model, retrieving an arbitrary 23 predictors for use in prediction.
 Preprocessing objects were generated for the five model types mentioned above utilizing only
 the required steps, and parameter values largely applied default ranges when tuning.
-The best 
+The best models of each workflow type were advanced to the public Kaggle leaderboard
+for evaluation; the submitted models performed largely on par with their training
+results.
+
+```{r}
+#| label: tbl-s1
+#| echo: false
+#| tbl-cap: "Submission 1 Optimal Model Results"
+
+tribble(
+  ~Model_Type, ~Optimal_Model_Name, ~Testing_MAE,
+  "Boosted trees", "bt1_096_predict.csv", 104.55,
+  "Random forest", "rf1_11_predict.csv", 105.55,
+  "K-nearest neighbors", "knn1_6_predict.csv", 117.97,
+  "Neural network", "mlp1_2_predict.csv", 137.25,
+  "Generalized linear model", "lasso1_1_predict.csv", 149.39
+) %>% 
+  knitr::kable()
+```
 
 
-submitted best performing of each type to evaluate on public leaderboard - largely
-same trend
+As shown in @tbl-s1 above, the optimal boosted trees model proved the strongest of the
+first wave submissions. Further boosted trees tuning was therefore pursued in the
+later pipelines. However, the best random forest model finished not far behind the
+boosted tree. I select `rf1_11_predict.csv`, the best-performing non-boosted trees model tested
+during the exercise, as a benchmark for private leaderboard evaluation.
 
-s1 results
+While the boosted trees workflow underwent extensive tuning during the subsequent
+two submission pipelines, the first wave's optimal random forest model performed respectably 
+with little to no bespoke adjustments. I am therefore interested to compare `rf1_11_predict.csv`'s
+private leaderboard power to that of the second selected model, which was likely 
+overfitted to the public leaderboard on account of its extensive parameter tuning.
+Even if the first wave's random forest model does not strictly outperform its boosted
+trees counterpart, a low relative MAE could demonstrate that the former is more generalizable
+to foreign Airbnb data and thus worth exploring further in the future.
 
-s1:
-. b1 best, rf slightly behind
-. best non BT
-
-
-while i mainly pursued BT, RF performed respectably on first iteration
-Somewhat arbitrary, since only BT really pursued
-But BT has overturning issues (learn rate and loos reduction)
-RF Might overfit since it’s trees, but probably less so
-Would be interested to see performance on private leaderboard, although it’s prbo still worse given lack of preprocessing and tuning
-
-
-
-
-
-
-
-s2:
-. var select bad from class
-
-
-
-
+## Selected Model 2
 
 The second selected model, `bt1_07_all_predict.csv`, crossed the A grade threshold
 with a MAE of 96.7 on the public leaderboard. It was the best-performing boosted
 trees workflow from the third submission wave.
 
 
+s2:
+. var select bad from class
+. a little preprocessing
+. lots of tuning (increased trees, learn rate, light gbm)
+
+s3: same but with further tuning of tree_depth, trees, and loss_reduction
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-That second submission wave was informed by lessons from the first. The first submission wave utilized a kitchen-sink approach to preprocessing and tuning. Data cleaning included number parsing and predictor factorization as well as value extraction from the bathrooms and amenities variables. Variable selection was informed by a basic random forest model, and I largely conducted preprocessing with only the necessary steps to run each model type. The first submission pipeline produced serviceable random forest and boosted trees models; see @fig-s1-autoplot for 
-a plot of all tested models during the first submission set. However, I felt that the haphazard variable selection, preprocessing, and tuning steps could be improved to enhance predictive power. Specifically, I sought to use a less arbitrary selection method, extract more features from the original dataset, and narrow tuning ranges.
-
-![Submission Set Boosted Trees Tuning](figures/s1_bt_autoplot.jpg){#fig-s1-bt-autoplot}
-
-The second submission wave fitted boosted trees, random forest, k-nearest neighbors, and neural network models, though I paid particular attention to the former two on account of their strong previous performance. As mentioned above, I used the second submission to fine-tune my overall machine learning pipeline. For additional preprocessing, I extracted year values from date predictors, changed review scores variables into binaries of high and low ratings, and pulled key terms from the listing description. In addition to the random forest-based variable selection, I added a parallel lasso pipeline for a tuned comparison. Hyperparameter ranges for each model were narrowed according to tuning results from the previous wave, which are shown in the above @fig-s1-bt-autoplot. Finally, in line with our discussions in class, I adopted the `lightgbm` package engine for the boosted trees workflow. 
-
-```{r}
-#| label: tbl-s2-metrics
-#| tbl-cap: "Selected Model 1 Performance"
-#| echo: false
-#| eval: false
-
-metrics_s2_bt1_07_lassovars %>% 
-  knitr::kable(digits = 3)
-```
-
-
-The changes implemented for the second submission wave improved predictive performance overall. After resolving an issue with submission formatting, a boosted trees model using lasso-selected variables emerged as the optimal model. 
-As indicated in @tbl-s2-metrics, the `bt1_07_lassovars_predict_prob.csv` model
-produced an overall accuracy of 0.92 and a ROC AUC of 0.974. The latter metric, the 
-more useful evaluation tool, was particularly reassuring, indicating that the
-boosted trees model was able to identify a very high proportion of Airbnb superhosts
-without inflating the false positive rate.
-
-While not my highest-performing model of the entire exercise, the second submission’s boosted trees model presents a basic but effective framework, avoiding potential overfitting in the later models. I therefore believe that this model could prove as or more powerful for the private leaderboard testing set as the model discussed next. Nevertheless, because the second submission’s optimal model utilizes a boosted trees workflow with a high learn rate, I would expect overfitting to remain an issue for generalizability. 
-
-## Selected Model 2
-
-The second submission I have selected is `bt1_45_lassovars_predict_prob.csv`, the optimal boosted trees model generated during the fifth submission wave. 
 
 ```{r}
 #| label: tbl-s3-s4

@@ -27,6 +27,12 @@ load(here("submissions/submission-1/results/tune_bt.rda"))
 # load knn tuned
 load(here("submissions/submission-1/results/tune_knn.rda"))
 
+# load mlp tuned
+load(here("submissions/submission-1/results/mlp_tune.rda"))
+
+# load lasso tuned
+load(here("submissions/submission-1/results/tune_lasso.rda"))
+
 # setting seed
 set.seed(401)
 
@@ -153,3 +159,65 @@ knn1_6_predict <- knn1_6_predict %>%
 
 # saving predict object
 write_csv(knn1_6_predict, file = here("submissions/submission-1/pred/knn1_6_predict.csv"))
+
+# lasso 1: 1 ----
+
+# finalize workflow 
+
+lasso1_1 <- tune_lasso %>% 
+  collect_metrics() %>% 
+  filter(.config == "Preprocessor2_Model1", .metric == "mae")
+
+wflow_lasso1_1 <- tune_lasso %>%  
+  extract_workflow() %>% 
+  finalize_workflow(lasso1_1)
+
+# fitting final model 
+
+# fitting bt model
+lasso1_1_fit <- fit(wflow_lasso1_1, reg_train)
+
+# predict function
+lasso1_1_predict <- predict(lasso1_1_fit, new_data = reg_test)
+
+lasso1_1_predict <- lasso1_1_predict %>% 
+  bind_cols(reg_test) %>% 
+  select(id, .pred) %>% 
+  rename(predicted = .pred) %>% 
+  mutate(
+    predicted = round(10^predicted, digits = 0)
+  )
+
+# saving predict object
+write_csv(lasso1_1_predict, file = here("submissions/submission-1/pred/lasso1_1_predict.csv"))
+
+# mlp 1: 2 ----
+
+# finalize workflow 
+
+mlp1_2 <- mlp_tune %>% 
+  collect_metrics() %>% 
+  filter(.config == "Preprocessor8_Model2", .metric == "mae")
+
+wflow_mlp1_2 <- mlp_tune %>%  
+  extract_workflow() %>% 
+  finalize_workflow(mlp1_2)
+
+# fitting final model 
+
+# fitting bt model
+mlp1_2_fit <- fit(wflow_mlp1_2, reg_train)
+
+# predict function
+mlp1_2_predict <- predict(mlp1_2_fit, new_data = reg_test)
+
+mlp1_2_predict <- mlp1_2_predict %>% 
+  bind_cols(reg_test) %>% 
+  select(id, .pred) %>% 
+  rename(predicted = .pred) %>% 
+  mutate(
+    predicted = round(10^predicted, digits = 0)
+  )
+
+# saving predict object
+write_csv(mlp1_2_predict, file = here("submissions/submission-1/pred/mlp1_2_predict.csv"))

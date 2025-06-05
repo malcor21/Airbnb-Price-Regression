@@ -83,3 +83,9 @@ tune_lasso %>%
 # low amount of regularization is best - -15, -5
 # not sure on num components, but maybe try above 4 - 12
 # lasso penalty proportion doesn't seem to do much
+
+tune_lasso %>% 
+  select_best(metric = "mae")
+
+mlp_tune %>% 
+  select_best(metric = "mae")
