@@ -1,4 +1,4 @@
-## Classification Prediction Problem
+## Regression Prediction Problem
 
 ## Overview
 
